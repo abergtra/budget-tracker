@@ -37,5 +37,53 @@ function uploadTransaction() {
 
     //variable to store all records from object store
     const getAll = budgetObjectStore.getAll();
-    
+
+    //function to get all records on success
+    getAll.onsuccess = function() {
+
+        //send data stored in indexeddb to api server
+        if (getAll.result.length > 0) {
+            fetch('/api/transaction', {
+                method: 'POST',
+                body: JSON.stringify(getAll.result),
+                headers: {
+                    Accept: 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(serverResponse => {
+                if (serverResponse.message) {
+                    throw new Error(serverResponse);
+                }
+
+                // open new transaction
+                const transaction = db.transaction(['new_transaction'], 'readwrite');
+
+                // connect to new transaction object store
+                const budgetObjectStore = transaction.objectStore('new_transaction');
+
+                // clear all items in budget object store
+                budgetObjectStore.clear();
+
+                alert('All saved transactions submitted!');
+            })
+            .catch(err => {
+                console.log(err);
+            });
+        }
+    }
 }
+
+//function to submit transaction without internet connectionj
+function saveRecord(record) {
+    //open new transaction
+    const transaction = db.transaction(['new_transaction'], 'readwrite');
+
+    //connect to object store for new transaction
+    const budgetObjectStore = transaction.objectStore('new_transaction');
+
+    //add record to object store
+    budgetObjectStore.add(record);
+}
+

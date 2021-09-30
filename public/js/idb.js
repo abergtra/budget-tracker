@@ -14,3 +14,16 @@ request.onupgradeneeded = function(event) {
     db.createObjectStore('new_transaction', { autoIncrement: true });
 };
 
+//function for successful database
+request.onsuccess = function(event) {
+
+    //save reference for successful db to global variable
+    db = event.target.result;
+
+    //run uploadTransaction() function to send all local db data to api if app online
+    if (navigator.onLine) {
+        uploadTransaction();
+    }
+};
+
+//function to send all local db data to api

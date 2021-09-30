@@ -87,3 +87,10 @@ function saveRecord(record) {
     budgetObjectStore.add(record);
 }
 
+//catch request error
+request.onerror = function(event) {
+    console.log(event.target.errorCode);
+};
+
+//event listener for app going online
+window.addEventListener('online', uploadTransaction);

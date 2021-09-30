@@ -27,3 +27,15 @@ request.onsuccess = function(event) {
 };
 
 //function to send all local db data to api
+function uploadTransaction() {
+
+    //open db transaction
+    const transaction = db.transaction(['new_transaction'], 'readwrite');
+
+    //connect to object store
+    const budgetObjectStore = transaction.objectStore('new_transaction');
+
+    //variable to store all records from object store
+    const getAll = budgetObjectStore.getAll();
+    
+}
